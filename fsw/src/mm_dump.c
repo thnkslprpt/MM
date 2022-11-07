@@ -35,6 +35,9 @@
 #include "mm_mission_cfg.h"
 #include <string.h>
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wstringop-overflow"
+
 /*************************************************************************
 ** External Data
 *************************************************************************/
@@ -47,7 +50,7 @@ extern MM_AppData_t MM_AppData;
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 bool MM_PeekCmd(const CFE_SB_Buffer_t *BufPtr)
 {
-    bool          Valid = true;
+    bool          Valid;
     MM_PeekCmd_t *CmdPtr;
     cpuaddr       SrcAddress     = 0;
     uint16        ExpectedLength = sizeof(MM_PeekCmd_t);
@@ -186,8 +189,8 @@ bool MM_PeekMem(const MM_PeekCmd_t *CmdPtr, cpuaddr SrcAddress)
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 bool MM_DumpMemToFileCmd(const CFE_SB_Buffer_t *BufPtr)
 {
-    bool                    Valid      = false;
-    int32                   OS_Status  = OS_SUCCESS;
+    bool                    Valid = false;
+    int32                   OS_Status;
     osal_id_t               FileHandle = OS_OBJECT_ID_UNDEFINED;
     cpuaddr                 SrcAddress = 0;
     MM_DumpMemToFileCmd_t * CmdPtr;
@@ -570,6 +573,7 @@ bool MM_FillDumpInEventBuffer(cpuaddr SrcAddress, const MM_DumpInEventCmd_t *Cmd
 #if defined(MM_OPT_CODE_MEM8_MEMTYPE) || defined(MM_OPT_CODE_MEM16_MEMTYPE) || defined(MM_OPT_CODE_MEM32_MEMTYPE)
     uint32 i;
 #endif
+    /* cppcheck-suppress unusedVariable */
     int32 PSP_Status;
     bool  Valid = true;
 
@@ -665,3 +669,4 @@ bool MM_FillDumpInEventBuffer(cpuaddr SrcAddress, const MM_DumpInEventCmd_t *Cmd
 
     return Valid;
 }
+#pragma GCC diagnostic pop
