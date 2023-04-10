@@ -50,7 +50,7 @@ bool MM_PeekCmd(const CFE_SB_Buffer_t *BufPtr)
     bool          Valid;
     MM_PeekCmd_t *CmdPtr;
     cpuaddr       SrcAddress     = 0;
-    uint16        ExpectedLength = sizeof(MM_PeekCmd_t);
+    size_t        ExpectedLength = sizeof(MM_PeekCmd_t);
     bool          Result         = false;
 
     /* Verify command packet length */
@@ -100,9 +100,9 @@ bool MM_PeekMem(const MM_PeekCmd_t *CmdPtr, cpuaddr SrcAddress)
     uint16 WordValue      = 0;
     uint32 DWordValue     = 0;
     int32  PSP_Status     = 0;
-    uint32 BytesProcessed = 0;
+    size_t BytesProcessed = 0;
     uint32 DataValue      = 0;
-    uint8  DataSize       = 0;
+    size_t DataSize       = 0;
     uint32 EventID        = 0;
 
     /*
@@ -166,14 +166,14 @@ bool MM_PeekMem(const MM_PeekCmd_t *CmdPtr, cpuaddr SrcAddress)
         MM_AppData.HkPacket.DataValue      = DataValue;
 
         CFE_EVS_SendEvent(EventID, CFE_EVS_EventType_INFORMATION,
-                          "Peek Command: Addr = %p Size = %d bits Data = 0x%08X", (void *)SrcAddress, DataSize,
-                          (unsigned int)DataValue);
+                          "Peek Command: Addr = %p Size = %u bits Data = 0x%08X", (void *)SrcAddress,
+                          (unsigned int)DataSize, (unsigned int)DataValue);
     }
     else
     {
         CFE_EVS_SendEvent(MM_PSP_READ_ERR_EID, CFE_EVS_EventType_ERROR,
-                          "PSP read memory error: RC=%d, Address=%p, MemType=MEM%d", PSP_Status, (void *)SrcAddress,
-                          DataSize);
+                          "PSP read memory error: RC=%d, Address=%p, MemType=MEM%u", PSP_Status, (void *)SrcAddress,
+                          (unsigned int)DataSize);
     }
 
     return ValidPeek;
@@ -193,7 +193,7 @@ bool MM_DumpMemToFileCmd(const CFE_SB_Buffer_t *BufPtr)
     MM_DumpMemToFileCmd_t * CmdPtr;
     CFE_FS_Header_t         CFEFileHeader;
     MM_LoadDumpFileHeader_t MMFileHeader;
-    uint16                  ExpectedLength = sizeof(MM_DumpMemToFileCmd_t);
+    size_t                  ExpectedLength = sizeof(MM_DumpMemToFileCmd_t);
 
     /* Verify command packet length */
     if (MM_VerifyCmdLength(&BufPtr->Msg, ExpectedLength))
@@ -374,8 +374,8 @@ bool MM_DumpMemToFile(osal_id_t FileHandle, const char *FileName, const MM_LoadD
     bool   ValidDump = false;
     int32  OS_Status;
     uint32 BytesRemaining = FileHeader->NumOfBytes;
-    uint32 BytesProcessed = 0;
-    uint32 SegmentSize    = MM_MAX_DUMP_DATA_SEG;
+    size_t BytesProcessed = 0;
+    size_t SegmentSize    = MM_MAX_DUMP_DATA_SEG;
     uint8 *SourcePtr      = (uint8 *)(FileHeader->SymAddress.Offset);
     uint8 *ioBuffer       = (uint8 *)&MM_AppData.DumpBuffer[0];
 
@@ -405,8 +405,8 @@ bool MM_DumpMemToFile(osal_id_t FileHandle, const char *FileName, const MM_LoadD
         {
             BytesRemaining = 0;
             CFE_EVS_SendEvent(MM_OS_WRITE_EXP_ERR_EID, CFE_EVS_EventType_ERROR,
-                              "OS_write error received: RC = %d, Expected = %d, File = '%s'", OS_Status,
-                              (int)SegmentSize, FileName);
+                              "OS_write error received: RC = %d, Expected = %u, File = '%s'", OS_Status,
+                              (unsigned int)SegmentSize, FileName);
         }
     }
 
@@ -459,8 +459,8 @@ bool MM_WriteFileHeaders(const char *FileName, osal_id_t FileHandle, CFE_FS_Head
             /* We either got an error or didn't read as much data as expected */
             Valid = false;
             CFE_EVS_SendEvent(MM_OS_WRITE_EXP_ERR_EID, CFE_EVS_EventType_ERROR,
-                              "OS_write error received: RC = %d Expected = %d File = '%s'", OS_Status,
-                              (int)sizeof(MM_LoadDumpFileHeader_t), FileName);
+                              "OS_write error received: RC = %d Expected = %u File = '%s'", OS_Status,
+                              (unsigned int)sizeof(MM_LoadDumpFileHeader_t), FileName);
 
         } /* end OS_write if */
 
@@ -480,7 +480,7 @@ bool MM_DumpInEventCmd(const CFE_SB_Buffer_t *BufPtr)
     MM_DumpInEventCmd_t *CmdPtr;
     uint32               i;
     cpuaddr              SrcAddress     = 0;
-    uint16               ExpectedLength = sizeof(MM_DumpInEventCmd_t);
+    size_t               ExpectedLength = sizeof(MM_DumpInEventCmd_t);
     uint8 *              BytePtr;
     char                 TempString[MM_DUMPINEVENT_TEMP_CHARS];
     static char          EventString[CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
