@@ -2315,7 +2315,7 @@ void MM_VerifyLoadFileSize_Test_SizeError(void)
     char                    ExpectedEventString[CFE_MISSION_EVS_MAX_MESSAGE_LENGTH];
 
     snprintf(ExpectedEventString, CFE_MISSION_EVS_MAX_MESSAGE_LENGTH,
-             "Load file size error: Reported by OS = %%d Expected = %%ug File = '%%s'");
+             "Load file size error: Reported by OS = %%d Expected = %%u File = '%%s'");
 
     FileHeader.NumOfBytes = 99;
 
