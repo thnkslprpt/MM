@@ -62,8 +62,8 @@ void MM_LoadMem8FromFile_Test_Nominal(void)
 
     FileHeader.NumOfBytes = 2;
 
-    /* Set to fail condition "(ReadLength = OS_read(FileHandle, ioBuffer8, SegmentSize)) != SegmentSize" */
-    UT_SetDeferredRetcode(UT_KEY(OS_write), 1, FileHeader.NumOfBytes);
+    /* Set OS_read to return the full file size on first call (since file is smaller than one segment) */
+    UT_SetDeferredRetcode(UT_KEY(OS_read), 1, FileHeader.NumOfBytes);
 
     /* Execute the function being tested */
     Result = MM_LoadMem8FromFile(FileHandle, (char *)"filename", &FileHeader, DestAddress);
@@ -98,8 +98,9 @@ void MM_LoadMem8FromFile_Test_CPUHogging(void)
 
     FileHeader.NumOfBytes = 2 * MM_MAX_LOAD_DATA_SEG;
 
-    /* Set to always fail condition "(ReadLength = OS_read(FileHandle, ioBuffer8, SegmentSize)) != SegmentSize" */
-    UT_SetDefaultReturnValue(UT_KEY(OS_read), FileHeader.NumOfBytes);
+    /* Set OS_read to return the segment size (MM_MAX_LOAD_DATA_SEG) for each read */
+    /* This tests CPU hogging prevention by forcing multiple segment reads */
+    UT_SetDefaultReturnValue(UT_KEY(OS_read), MM_MAX_LOAD_DATA_SEG);
 
     /* Execute the function being tested */
     Result = MM_LoadMem8FromFile(FileHandle, (char *)"filename", &FileHeader, DestAddress);
