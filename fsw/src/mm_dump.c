@@ -448,7 +448,7 @@ bool MM_WriteFileHeaders(const char *FileName, osal_id_t FileHandle, CFE_FS_Head
         OS_Status = OS_write(FileHandle, MMHeader, sizeof(MM_LoadDumpFileHeader_t));
         if (OS_Status != sizeof(MM_LoadDumpFileHeader_t))
         {
-            /* We either got an error or didn't read as much data as expected */
+            /* We either got an error or didn't write as much data as expected */
             Valid = false;
             CFE_EVS_SendEvent(MM_OS_WRITE_EXP_ERR_EID, CFE_EVS_EventType_ERROR,
                               "OS_write error received: RC = %d Expected = %u File = '%s'", (int)OS_Status,

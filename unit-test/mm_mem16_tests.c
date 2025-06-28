@@ -100,7 +100,7 @@ void MM_LoadMem16FromFile_Test_CPUHogging(void)
     FileHeader.NumOfBytes = 2 * MM_MAX_LOAD_DATA_SEG;
 
     /* Set to always fail condition "(ReadLength = OS_read(FileHandle, ioBuffer8, SegmentSize)) != SegmentSize" */
-    UT_SetDefaultReturnValue(UT_KEY(OS_write), FileHeader.NumOfBytes);
+    UT_SetDefaultReturnValue(UT_KEY(OS_read), FileHeader.NumOfBytes);
 
     /* Execute the function being tested */
     Result = MM_LoadMem16FromFile(FileHandle, (char *)"filename", &FileHeader, DestAddress);

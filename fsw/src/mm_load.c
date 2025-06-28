@@ -242,7 +242,7 @@ bool MM_PokeEeprom(const MM_PokeCmd_t *CmdPtr, cpuaddr DestAddress)
         case MM_DWORD_BIT_WIDTH:
             DataValue      = CmdPtr->Payload.Data;
             BytesProcessed = sizeof(uint32);
-            PSP_Status     = CFE_PSP_EepromWrite32(DestAddress, CmdPtr->Payload.Data);
+            PSP_Status     = CFE_PSP_EepromWrite32(DestAddress, DataValue);
             if (PSP_Status != CFE_PSP_SUCCESS)
             {
                 CFE_EVS_SendEvent(MM_OS_EEPROMWRITE32_ERR_EID, CFE_EVS_EventType_ERROR,
@@ -253,7 +253,7 @@ bool MM_PokeEeprom(const MM_PokeCmd_t *CmdPtr, cpuaddr DestAddress)
             {
                 CFE_EVS_SendEvent(MM_POKE_DWORD_INF_EID, CFE_EVS_EventType_INFORMATION,
                                   "Poke Command: Addr = %p, Size = 32 bits, Data = 0x%08X", (void *)DestAddress,
-                                  (unsigned int)(CmdPtr->Payload.Data));
+                                  (unsigned int)DataValue);
                 ValidPoke = true;
             }
             break;
